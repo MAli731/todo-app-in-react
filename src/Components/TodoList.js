@@ -4,7 +4,7 @@ import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function TodoList({ todos, deleteTodo }) {
+export default function TodoList({ todos, deleteTodo, Status }) {
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("All");
     const [status, setStatus] = useState("All");
@@ -13,7 +13,8 @@ export default function TodoList({ todos, deleteTodo }) {
     const filteredTodos = todos
         .filter(todo =>
             todo.title.toLowerCase().includes(search.toLowerCase()) &&
-            (category === "All" || todo.category === category)
+            (category === "All" || todo.category === category) &&
+            (status === "All" || todo.status === status)
         )
         .sort((a, b) =>
             asc
@@ -32,7 +33,6 @@ export default function TodoList({ todos, deleteTodo }) {
                     <Link className="nav-link d-inline text-white mx-2" to="/create">Create</Link>
                 </div>
             </nav>
-
             <div className="container mt-4">
                 <div className="d-flex gap-3 mb-4">
                     <span className="fs-5 fw-semibold">Category:</span>
@@ -94,19 +94,47 @@ export default function TodoList({ todos, deleteTodo }) {
                                     >
                                         ✖
                                     </span>
-                                    <h5 className="card-title">{todo.title}<span className="badge rounded-pill bg-success ms-2">Competed</span></h5>
+                                    <h5> <span
+                                        style={{
+                                            textDecoration: todo.status === "Completed" ? "line-through" : "none"
+                                        }}>
+                                        {todo.title}
+                                    </span>
+
+                                        {todo.status === "Completed" && (
+                                            <>
+                                                <i className="fa-solid fa-award text-success ms-4"></i>
+                                                <span className="ms-2 text-success fs-6">Completed</span>
+                                            </>
+                                        )}
+                                    </h5>
                                     <p className="card-text">{todo.desc}</p>
                                     <span className="p-3">Category :
                                         <span className="badge bg-primary ms-2 w-100">{todo.category}</span></span>
                                     <span className="p-3">Status :
-                                        <span className="badge bg-secondary ms-2 w-100">{todo.status}</span></span>
+                                        <span
+                                            className={`badge ms-2 w-100 ${todo.status === "Completed"
+                                                ? "bg-success"
+                                                : todo.status === "Pending"
+                                                    ? "bg-secondary"
+                                                    : "bg-primary"
+                                                }`}
+                                        >
+                                            {todo.status}
+                                        </span>
+                                    </span>
+                                    <span className="">Mark as {
+                                        todo.status === "Pending" ? "In-Progress" :
+                                            todo.status === "In-Progress" ?
+                                                "Completed" : "Completed"} :
+                                        <input
+                                            className="ms-2 flex-inline-block"
+                                            type="checkbox"
+                                            checked={todo.status === "Completed"}
+                                            onChange={() => Status(todo.id)}
+                                            disabled={todo.status === "Completed"}
+                                        /> </span>
 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                Completed
-                                            </label>
-                                    </div>
                                     <p className="text-muted mt-2">Created on : {todo.date}</p>
                                 </div>
                             </div>

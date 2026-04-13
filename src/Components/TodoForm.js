@@ -4,41 +4,56 @@ import { FaChevronLeft } from 'react-icons/fa';
 
 export default function TodoForm({ addTodo }) {
     const navigate = useNavigate();
+
     const [formData, setFormData] = React.useState({
         title: "",
         desc: "",
         category: "",
-        status: "Pending"
-    })  
-    const [errors, setErrors] = React.useState({})
+        status: "Pending",
+    });
+
+    const [errors, setErrors] = React.useState({});
+
     const handleChange = (e) => {
-        const { name, value, maxLength } = e.target;
-        const trimmedValue = value.slice(0, maxLength);
-        setFormData(prev => ({
-            ...prev,
-            [name]: trimmedValue
-        }));
-        setErrors(prevErrors => ({
-            ...prevErrors,
-            [name]: !trimmedValue.trim() ? `${name} is required` : ""
-        }));
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
     };
+
+    // Submit
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const newErrors = {
-            title: !formData.title.trim() ? "Title is required" : "",
-            desc: !formData.desc.trim() ? "Description is required" : "",
-            category: !formData.category ? "Category is required" : "",
-            status: !formData.status ? "Status is required" : ""
-        };
+        let newErrors = {};
+
+        if (!formData.title) {
+            newErrors.title = "Title is required";
+        }
+
+        if (!formData.desc) {
+            newErrors.desc = "Description is required";
+        }
+
+        if (!formData.category) {
+            newErrors.category = "Category is required";
+        }
 
         setErrors(newErrors);
 
-        if (Object.values(newErrors).every(err => !err)) {
-            addTodo({ ...formData, id: Date.now() });
-            setFormData({ title: "", desc: "", category: "", status: "Pending" });
-            navigate('/home');
+      
+        if (Object.keys(newErrors).length === 0) {
+            addTodo(formData);
+
+            setFormData({
+                title: "",
+                desc: "",
+                category: "",
+                status: "Pending",
+            });
+
+            navigate("/home");
         }
     };
 
@@ -109,25 +124,7 @@ export default function TodoForm({ addTodo }) {
                             <div className="invalid-feedback">{errors.category}</div>
                         )}
                     </div>
-                        {/* Status */}
-                    <div className="mb-2">
-                        <label className="form-label">Status</label>
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            className={`form-control ${errors.status ? "is-invalid" : ""}`}
-                        >
-                            <option value="">Select Status</option>
-                            <option value="Pending">Pending</option>
-                            <option value="In-Progress">In-Progress</option>
-                            <option value="Completed">Completed</option>
-                        </select>
 
-                        {errors.status && (
-                            <div className="invalid-feedback">{errors.status}</div>
-                        )}
-                    </div>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
             </div>
