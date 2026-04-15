@@ -2,39 +2,58 @@ import React, { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function TodoList({ todos, deleteTodo, Status }) {
-    const [search, setSearch] = useState("");
-    const [category, setCategory] = useState("All");
-    const [status, setStatus] = useState("All");
-    const [asc, setAsc] = useState(true);
+
+type Todo = {
+    id: number;
+    title: string;
+    desc: string;
+    category: string;
+    status: "Pending" | "In-Progress" | "Completed";
+    date: string;
+}
+type Props = {
+    todos: Todo[];
+    deleteTodo: (id: number) => void;
+    Status: (id: number) => void;
+}
+
+export default function TodoList({ todos, deleteTodo, Status }: Props) {
+
+    const [search, setSearch] = useState<string>("");
+    const [category, setCategory] = useState<string>("All");
+    const [status, setStatus] = useState<string>("All");
+    const [asc, setAsc] = useState<boolean>(true);
+
 
     const filteredTodos = todos
-        .filter(todo =>
+        .filter((todo: Todo) =>
             todo.title.toLowerCase().includes(search.toLowerCase()) &&
             (category === "All" || todo.category === category) &&
             (status === "All" || todo.status === status)
         )
-        .sort((a, b) =>
+        .sort((a: Todo, b: Todo) =>
             asc
                 ? a.title.localeCompare(b.title)
                 : b.title.localeCompare(a.title)
         );
 
 
+
     return (
         <>
             {/* Navbar */}
-            <nav className="navbar navbar-dark bg-dark px-4">
-                <span className="navbar-brand">To-Do List App</span>
-                <div>
-                    <Link className="nav-link d-inline text-white mx-2" to="/home">Home</Link>
+            <nav className="navbar navbar-dark bg-primary px-2">
+                <span className="navbar-brand ms-2 d-flex align-items-center ">
+
+                    To-Do List App</span>
+                <div className="d-flex flex-wrap">
+
                     <Link className="nav-link d-inline text-white mx-2" to="/create">Create</Link>
                 </div>
             </nav>
             <div className="container mt-4">
-                <div className="d-flex gap-3 mb-4">
+                <div className="d-flex flex-wrap gap-3 mb-4 align-items-center">
                     <span className="fs-5 fw-semibold">Category:</span>
                     <Dropdown>
                         <Dropdown.Toggle variant={category !== "All" ? "primary" : "secondary"}>
@@ -62,7 +81,7 @@ export default function TodoList({ todos, deleteTodo, Status }) {
                     </Dropdown>
                     <form className="d-flex flex-grow-1 me-2 search-form-custom" onSubmit={(e) => e.preventDefault()}>
                         <input
-                            className="form-control me-2"
+                            className="d-flex flex-column flex-sm-row border border-0 rounded p-2 flex-grow-1 gap-2 me-2"
                             type="search"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
@@ -75,7 +94,7 @@ export default function TodoList({ todos, deleteTodo, Status }) {
 
                     </form>
 
-                    <button className="btn btn-light" onClick={() => setAsc(!asc)}>
+                    <button className="btn btn-light  w-sm-auto" onClick={() => setAsc(!asc)}>
                         {asc ? "Sort Ascending" : "Sort Descending"} {asc ? <FaArrowUp /> : <FaArrowDown />}
                     </button>
                 </div>
@@ -83,7 +102,7 @@ export default function TodoList({ todos, deleteTodo, Status }) {
                 <div className="row mt-4">
                     {filteredTodos.length ? (
                         filteredTodos.map(todo => (
-                            <div className="col-md-4 mb-3" key={todo.id}>
+                            <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" key={todo.id}>
                                 <div className="card p-3 position-relative">
 
                                     {/* Delete */}
@@ -123,7 +142,7 @@ export default function TodoList({ todos, deleteTodo, Status }) {
                                             {todo.status}
                                         </span>
                                     </span>
-                                    <span className="">Mark as {
+                                    <span className="fw-semibold">Mark as {
                                         todo.status === "Pending" ? "In-Progress" :
                                             todo.status === "In-Progress" ?
                                                 "Completed" : "Completed"} :

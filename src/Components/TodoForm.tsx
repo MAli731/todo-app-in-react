@@ -1,20 +1,38 @@
-import React from 'react'
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from 'react-icons/fa';
+import { useState } from "react";
 
-export default function TodoForm({ addTodo }) {
+type FormData = {
+    title: string;
+    desc: string;
+    category: string;
+    status: "Pending";
+}
+
+type Props = {
+    addTodo: (todo: FormData) => void
+}
+
+type Errors = {
+    title?: string;
+    desc?: string;
+    category?: string;
+}
+
+export default function TodoForm({ addTodo }: Props) {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = React.useState({
+    const [formData, setFormData] = useState<FormData>({
+
         title: "",
         desc: "",
         category: "",
         status: "Pending",
     });
 
-    const [errors, setErrors] = React.useState({});
+    const [errors, setErrors] = useState<Errors>({});
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
@@ -23,10 +41,10 @@ export default function TodoForm({ addTodo }) {
     };
 
     // Submit
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        let newErrors = {};
+        let newErrors: Errors = {};
 
         if (!formData.title) {
             newErrors.title = "Title is required";
@@ -38,11 +56,12 @@ export default function TodoForm({ addTodo }) {
 
         if (!formData.category) {
             newErrors.category = "Category is required";
+
         }
 
         setErrors(newErrors);
 
-      
+
         if (Object.keys(newErrors).length === 0) {
             addTodo(formData);
 
@@ -59,7 +78,7 @@ export default function TodoForm({ addTodo }) {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-danger px-4">
                 <div className="container-fluid px-4 ">
                     <div className="collapse navbar-collapse text-start" id="navbarNav">
                         <ul className="navbar-nav  mb-lg-0">
@@ -114,7 +133,7 @@ export default function TodoForm({ addTodo }) {
                             onChange={handleChange}
                             className={`form-control ${errors.category ? "is-invalid" : ""}`}
                         >
-                            <option value="">Select Category<i class="fa-solid fa-angle-down"></i></option>
+                            <option value="">Select Category</option>
                             <option value="Study">Study</option>
                             <option value="Work">Work</option>
                             <option value="Health">Health</option>

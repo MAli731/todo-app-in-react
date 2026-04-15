@@ -8,6 +8,7 @@ function App() {
   const [todos, setTodos] = useState(
     JSON.parse(localStorage.getItem("todos")) || []
   );
+  // addTodo function 
 
   const addTodo = (newTodo) => {
     const updatedTodos = [
@@ -24,12 +25,14 @@ function App() {
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
 
-// delete function
+  // delete function
   const deleteTodo = (id) => {
     const updatedTodos = todos.filter(todo => todo.id !== id);
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
+
+  // status change function
   const Status = (id) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
@@ -46,9 +49,10 @@ function App() {
     });
 
     setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));  
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
- 
+
+
   return (
     <Router>
       <Routes>
