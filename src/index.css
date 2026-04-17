@@ -3,7 +3,7 @@ body {
   background-color: #abc8e6 !important;
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 70px;
   color: #333 !important;
 }
 
@@ -14,10 +14,12 @@ h1 {
   color: #333;
 
 }
-img{
+
+img {
   height: 35px;
   border-radius: 5px;
 }
+
 /* Navbar */
 .navbar-brand {
   font-weight: bold;
@@ -36,7 +38,7 @@ img{
   transition: 0.3s;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   background-color: #dfedf0 !important;
-  padding: 15px;
+  padding: 10px !important;
   margin-bottom: 20px;
 }
 
@@ -66,7 +68,7 @@ img{
   max-width: 500px;
   margin: 20px auto;
   padding: 25px;
-  background-color: #d9deef;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
@@ -150,9 +152,101 @@ img{
   color: #007bff;
 }
 
+.todo-header {
+  border: 1px solid #e3e6ea;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  transition: 0.3s;
+}
+
+.todo-header:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.todo-header h4 {
+  letter-spacing: 0.5px;
+  color: #333;
+}
+
 @media (max-width: 576px) {
   .search-filter-wrapper {
     flex-wrap: wrap;
     justify-content: center;
   }
+}
+
+.form-box {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  position: relative;
+  width: 500px;
+  max-width: 90%;
+
+}
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal {
+  z-index: 1050;
+}
+.fc-daygrid-day {
+  background-color: #ffffff;
+}
+
+.fc-daygrid-day:hover {
+  background-color: #f1f3f5;
+  cursor: pointer;
+}
+.fc-day-today {
+  background-color: #abe9cc !important;
+}
+.custom-event {
+  background-color: #318df0 !important; 
+  border: none !important;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.fc-event.pending {
+  background-color: #6c757d !important; /* gray */
+  border: none !important;
+}
+
+.fc-event.in-progress {
+  background-color: #ffc107 !important; /* yellow */
+  border: none !important;
+}
+
+.fc-event.completed {
+  background-color: #198754 !important; /* green */
+  border: none !important;
+  text-decoration: line-through;
 }

@@ -2,7 +2,18 @@ import React, { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Calendar from "react-calendar";
+import TodoForm from "./TodoForm";
+import { motion, AnimatePresence } from "framer-motion";
 
+
+
+type TodoFormData = {
+    title: string;
+    desc: string;
+    category: string;
+    status: "Pending";
+};
 
 type Todo = {
     id: number;
@@ -11,19 +22,23 @@ type Todo = {
     category: string;
     status: "Pending" | "In-Progress" | "Completed";
     date: string;
+
 }
 type Props = {
     todos: Todo[];
     deleteTodo: (id: number) => void;
     Status: (id: number) => void;
-}
+    addTodo: (todo: TodoFormData) => void;
+    onClose?: () => void;
+};
 
-export default function TodoList({ todos, deleteTodo, Status }: Props) {
-
-    const [search, setSearch] = useState<string>("");
-    const [category, setCategory] = useState<string>("All");
-    const [status, setStatus] = useState<string>("All");
-    const [asc, setAsc] = useState<boolean>(true);
+export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) {
+    const [showForm, setShowForm] = useState(false);
+    const [search, setSearch] = useState("");
+    const [category, setCategory] = useState("All");
+    const [status, setStatus] = useState("All");
+    const [asc, setAsc] = useState(true);
+    const [showCalendar, setShowCalendar] = useState(false);
 
 
     const filteredTodos = todos
@@ -31,6 +46,7 @@ export default function TodoList({ todos, deleteTodo, Status }: Props) {
             todo.title.toLowerCase().includes(search.toLowerCase()) &&
             (category === "All" || todo.category === category) &&
             (status === "All" || todo.status === status)
+
         )
         .sort((a: Todo, b: Todo) =>
             asc
@@ -38,67 +54,140 @@ export default function TodoList({ todos, deleteTodo, Status }: Props) {
                 : b.title.localeCompare(a.title)
         );
 
-
-
     return (
         <>
             {/* Navbar */}
-            <nav className="navbar navbar-dark bg-primary px-2">
+            <nav className="navbar navbar-dark bg-primary px-2 fixed-top">
                 <span className="navbar-brand ms-2 d-flex align-items-center ">
 
                     To-Do List App</span>
                 <div className="d-flex flex-wrap">
-
-                    <Link className="nav-link d-inline text-white mx-2" to="/create">Create</Link>
+                    <button
+                        className="btn btn-outline-success text-dark bg-white btn-sm mx-2"
+                        onClick={() => setShowForm(prev => !prev)}
+                    >
+                        Create
+                    </button>
                 </div>
             </nav>
-            <div className="container mt-4">
-                <div className="d-flex flex-wrap gap-3 mb-4 align-items-center">
-                    <span className="fs-5 fw-semibold">Category:</span>
-                    <Dropdown>
-                        <Dropdown.Toggle variant={category !== "All" ? "primary" : "secondary"}>
-                            {category}
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => setCategory("All")}>All</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setCategory("Health")}>Health</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setCategory("Study")}>Study</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setCategory("Work")}>Work</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                    <span className="fs-5 fw-semibold">Status:</span>
-                    <Dropdown>
+            <div className="container mt-4 ">
+                <AnimatePresence>
+                    {showForm && (
+                        <motion.div
+                            className="modal-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <motion.div
+                                className="modal-box"
+                                initial={{ scale: 0.8, y: -50, opacity: 0 }}
+                                animate={{ scale: 1, y: 0, opacity: 1 }}
+                                exit={{ scale: 0.8, y: -50, opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                            >
+                                <button
+                                    onClick={() => setShowForm(false)}
+                                    style={{
+                                        position: "absolute",
+                                        top: "40px",
+                                        right: "15px",
+                                        border: "none",
+                                        background: "transparent",
+                                        fontSize: "25px",
+                                        cursor: "pointer",
+                                        color: "red",
+                                    }}
+                                >
+                                    ✖
+                                </button>
 
-                        <Dropdown.Toggle variant={status !== "All" ? "primary" : "secondary"}>
-                            {status}
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => setStatus("All")}>All</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setStatus("Pending")}>Pending</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setStatus("In-Progress")}>In-Progress</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setStatus("Completed")}>Completed</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                    <form className="d-flex flex-grow-1 me-2 search-form-custom" onSubmit={(e) => e.preventDefault()}>
+                                <TodoForm
+                                    addTodo={addTodo}
+                                    onClose={() => setShowForm(false)}
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                <div className="todo-header shadow-sm p-3 mb-4 rounded">
+                    <div className="d-flex flex-wrap align-items-center justify-content-between">
+                        <div className="d-flex align-items-center gap-3 flex-wrap">
+
+                            {/* Category */}
+                            <div className="d-flex align-items-center gap-2">
+                                <span className="fw-semibold">Category:</span>
+                                <Dropdown>
+                                    <Dropdown.Toggle size="sm" variant={category !== "All" ? "primary" : "secondary"}>
+                                        {category}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => setCategory("All")}>All</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setCategory("Health")}>Health</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setCategory("Study")}>Study</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setCategory("Work")}>Work</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+
+
+                            <div className="d-flex align-items-center gap-2">
+                                <span className="fw-semibold">Status:</span>
+                                <Dropdown>
+                                    <Dropdown.Toggle size="sm" variant={status !== "All" ? "primary" : "secondary"}>
+                                        {status}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => setStatus("All")}>All</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setStatus("Pending")}>Pending</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setStatus("In-Progress")}>In-Progress</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => setStatus("Completed")}>Completed</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+
+                        </div>
+
+                        <div className="text-center flex-grow-1">
+                            <h4 className="m-0 fw-bold">📋 TodoList Dashboard</h4>
+                        </div>
+
+                        <div className="d-flex align-items-center gap-2">
+                            <Link to="/calendar" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                                <i className="fa-regular fa-calendar"></i>
+                                History
+                            </Link>
+
+                            <button
+                                className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                                onClick={() => setAsc(!asc)}
+                            >
+                                {asc ? "Asc" : "Desc"}
+                                {asc ? <FaArrowUp /> : <FaArrowDown />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="d-flex justify-content-center">
+                    <form className="d-flex align-items-center" onSubmit={(e) => e.preventDefault()}>
                         <input
-                            className="d-flex flex-column flex-sm-row border border-0 rounded p-2 flex-grow-1 gap-2 me-2"
+                            className="d-flex flex-column flex-sm-row border border-0 rounded p-2 gap-2 me-2"
                             type="search"
                             value={search}
+                            style={{ width: "800px" }}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search..."
                             aria-label="Search"
                         />
-                        <button className="btn btn-outline-success" type="submit">
+                        <button className="btn btn-outline-success " type="submit">
                             Search
                         </button>
 
                     </form>
 
-                    <button className="btn btn-light  w-sm-auto" onClick={() => setAsc(!asc)}>
-                        {asc ? "Sort Ascending" : "Sort Descending"} {asc ? <FaArrowUp /> : <FaArrowDown />}
-                    </button>
                 </div>
-                <h3 className="text-center">To-Do List</h3>
+
                 <div className="row mt-4">
                     {filteredTodos.length ? (
                         filteredTodos.map(todo => (

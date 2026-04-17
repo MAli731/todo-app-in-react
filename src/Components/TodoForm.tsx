@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from 'react-icons/fa';
 import { useState } from "react";
+import { data } from 'react-router-dom';
 
-type FormData = {
+type TodoFormData = {
     title: string;
     desc: string;
     category: string;
     status: "Pending";
-}
+};
 
 type Props = {
-    addTodo: (todo: FormData) => void
-}
+    addTodo: (todo: TodoFormData) => void;
+    onClose: () => void;
+};
 
 type Errors = {
     title?: string;
@@ -19,19 +20,15 @@ type Errors = {
     category?: string;
 }
 
-export default function TodoForm({ addTodo }: Props) {
-    const navigate = useNavigate();
-
-    const [formData, setFormData] = useState<FormData>({
-
-        title: "",
-        desc: "",
-        category: "",
-        status: "Pending",
-    });
+export default function TodoForm({ addTodo , onClose }: Props) {
+    const [formData, setFormData] = useState<TodoFormData>({
+    title: "",
+    desc: "",
+    category: "",
+    status: "Pending",
+});
 
     const [errors, setErrors] = useState<Errors>({});
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData({
@@ -39,6 +36,7 @@ export default function TodoForm({ addTodo }: Props) {
             [name]: value,
         });
     };
+   
 
     // Submit
     const handleSubmit = (e: React.FormEvent) => {
@@ -60,8 +58,6 @@ export default function TodoForm({ addTodo }: Props) {
         }
 
         setErrors(newErrors);
-
-
         if (Object.keys(newErrors).length === 0) {
             addTodo(formData);
 
@@ -71,29 +67,16 @@ export default function TodoForm({ addTodo }: Props) {
                 category: "",
                 status: "Pending",
             });
-
-            navigate("/home");
+              onClose?.(); 
+          
         }
     };
 
     return (
-        <>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-danger px-4">
-                <div className="container-fluid px-4 ">
-                    <div className="collapse navbar-collapse text-start" id="navbarNav">
-                        <ul className="navbar-nav  mb-lg-0">
-                            <li className="nav-item " >
-                                <a className="nav-link active mx-4" href="/home"> <FaChevronLeft /> Go Back to home</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+        <>           
             <div className='todo-form-container'>
-
                 <form onSubmit={handleSubmit}>
-                    <h1>Create Todo Item</h1>
-
+                    <h4>Create Todo Item</h4>
                     {/* Title */}
                     <div className="mb-3">
                         <label className="form-label">Title</label>

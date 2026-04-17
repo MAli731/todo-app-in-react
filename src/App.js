@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TodoList from "./Components/TodoList";
 import TodoForm from "./Components/TodoForm";
+import "react-datepicker/dist/react-datepicker.css";
+import CalendarPage from "./Components/CalenderPage";
 
 function App() {
 
@@ -16,8 +18,9 @@ function App() {
       {
         id: Date.now(),
         ...newTodo,
-        date: new Date().toLocaleString(),
-        status: "Pending"
+        date: new Date().toISOString().split("T")[0],
+        status: "Pending",
+
       },
     ];
 
@@ -50,8 +53,7 @@ function App() {
 
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
-
+  };
 
   return (
     <Router>
@@ -64,8 +66,10 @@ function App() {
               todos={todos}
               deleteTodo={deleteTodo}
               Status={Status}
+              addTodo={addTodo}
             />
-          } />
+          }
+        />
 
         <Route
           path="/home"
@@ -74,6 +78,7 @@ function App() {
               todos={todos}
               deleteTodo={deleteTodo}
               Status={Status}
+              addTodo={addTodo}
             />
           }
         />
@@ -81,9 +86,19 @@ function App() {
 
         <Route
           path="/create"
-          element={<TodoForm addTodo={addTodo} />}
+          element={
+            <TodoForm
+              addTodo={addTodo}
+              onClose={() => window.history.back()}
+            />
+          }
         />
-
+        <Route
+          path="/calendar"
+          element={<CalendarPage
+            todos={todos} />}
+          Status={Status}
+        />
       </Routes>
     </Router>
   );
