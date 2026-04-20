@@ -7,12 +7,12 @@ import TodoForm from "./TodoForm";
 import { motion, AnimatePresence } from "framer-motion";
 
 
-
 type TodoFormData = {
     title: string;
     desc: string;
     category: string;
     status: "Pending";
+    time: string;
 };
 
 type Todo = {
@@ -22,6 +22,7 @@ type Todo = {
     category: string;
     status: "Pending" | "In-Progress" | "Completed";
     date: string;
+    time: string;
 
 }
 type Props = {
@@ -70,6 +71,7 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                     </button>
                 </div>
             </nav>
+                        {/* animation for form modal */}
             <div className="container mt-4 ">
                 <AnimatePresence>
                     {showForm && (
@@ -109,6 +111,7 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                             </motion.div>
                         </motion.div>
                     )}
+                    {/* animation */}
                 </AnimatePresence>
                 <div className="todo-header shadow-sm p-3 mb-4 rounded">
                     <div className="d-flex flex-wrap align-items-center justify-content-between">
@@ -130,7 +133,8 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                                 </Dropdown>
                             </div>
 
-
+                                {/* status */}
+                                
                             <div className="d-flex align-items-center gap-2">
                                 <span className="fw-semibold">Status:</span>
                                 <Dropdown>
@@ -183,9 +187,7 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                         <button className="btn btn-outline-success " type="submit">
                             Search
                         </button>
-
-                    </form>
-
+                    </form> 
                 </div>
 
                 <div className="row mt-4">
@@ -194,7 +196,7 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                             <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3" key={todo.id}>
                                 <div className="card p-3 position-relative">
 
-                                    {/* Delete */}
+                                 
                                     <span
                                         className="text-danger position-absolute"
                                         style={{ top: 10, right: 15, cursor: "pointer" }}
@@ -241,9 +243,9 @@ export default function TodoList({ todos, deleteTodo, Status, addTodo }: Props) 
                                             checked={todo.status === "Completed"}
                                             onChange={() => Status(todo.id)}
                                             disabled={todo.status === "Completed"}
-                                        /> </span>
-
-                                    <p className="text-muted mt-2">Created on : {todo.date}</p>
+                                        /> 
+                                        </span>
+                                    <p className="text-muted mt-2">Created on : {todo.date} at {todo.time}</p>
                                 </div>
                             </div>
                         ))

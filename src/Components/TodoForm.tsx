@@ -7,6 +7,7 @@ type TodoFormData = {
     desc: string;
     category: string;
     status: "Pending";
+    time : string;
 };
 
 type Props = {
@@ -26,6 +27,7 @@ export default function TodoForm({ addTodo , onClose }: Props) {
     desc: "",
     category: "",
     status: "Pending",
+    time: ""
 });
 
     const [errors, setErrors] = useState<Errors>({});
@@ -66,6 +68,7 @@ export default function TodoForm({ addTodo , onClose }: Props) {
                 desc: "",
                 category: "",
                 status: "Pending",
+                time: ""
             });
               onClose?.(); 
           

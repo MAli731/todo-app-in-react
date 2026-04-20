@@ -4,12 +4,14 @@ import TodoList from "./Components/TodoList";
 import TodoForm from "./Components/TodoForm";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarPage from "./Components/CalenderPage";
+// import { time } from "framer-motion";
 
 function App() {
 
   const [todos, setTodos] = useState(
     JSON.parse(localStorage.getItem("todos")) || []
   );
+
   // addTodo function 
 
   const addTodo = (newTodo) => {
@@ -19,6 +21,7 @@ function App() {
         id: Date.now(),
         ...newTodo,
         date: new Date().toISOString().split("T")[0],
+        time: new Date().toLocaleTimeString(),
         status: "Pending",
 
       },
@@ -36,6 +39,7 @@ function App() {
   };
 
   // status change function
+
   const Status = (id) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
@@ -96,8 +100,9 @@ function App() {
         <Route
           path="/calendar"
           element={<CalendarPage
-            todos={todos} />}
-          Status={Status}
+            todos={todos} 
+            Status={Status}/> }
+          
         />
       </Routes>
     </Router>
