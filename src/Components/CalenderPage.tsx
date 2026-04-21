@@ -15,7 +15,8 @@ const getLocalDateString = (d: string) => {
 
 export default function CalendarPage({ todos, Status }: { todos: any[]; Status: (id: number) => void }) {
     const [selectedDate, setSelectedDate] = useState("");
-    const [showModal, setShowModal] = useState(false);
+    const [showListModal, setShowListModal] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedTodo, setSelectedTodo] = useState<any>(null);
     const filteredTodos = todos.filter(t => getLocalDateString(t.date) === selectedDate);
 
@@ -31,14 +32,15 @@ export default function CalendarPage({ todos, Status }: { todos: any[]; Status: 
             </nav>
 
             <div className="container mt-2 pt-2">
-                <div className="card shadow border-0 p-3">
+                <div className="card shadow border-0 p-3 ">
 
-                    {/* calender   */}
+                    {/*Calender*/}
 
                     <FullCalendar
                         plugins={[dayGridPlugin, interactionPlugin]}
                         initialView="dayGridMonth"
                         height="70vh"
+
                         events={todos.map(todo => ({
                             title: todo.title,
                             date: getLocalDateString(todo.date),
@@ -46,58 +48,98 @@ export default function CalendarPage({ todos, Status }: { todos: any[]; Status: 
                         }))}
                         dateClick={(info) => {
                             setSelectedDate(info.dateStr);
-                            setShowModal(true);
+                            setShowListModal(true);
                             setSelectedTodo(null);
                         }}
                     />
                 </div>
             </div>
-            {/* Modal */}
-            {showModal && (
-                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+
+            {/*Listview Modal */}
+
+            {showListModal && (
+                <div className="modal d-block"
+
+                    style={{
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        backdropFilter: showDetailModal ? 'blur(5px)' : 'none'
+                    }}>
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
+                        <div className="modal-content" style={{
+                            opacity: showDetailModal ? 0.6 : 1,
+                            pointerEvents: showDetailModal ? 'none' : 'auto'
+                        }}>
+
                             <div className="modal-header bg-primary text-white">
-                                <h5 className="modal-title">Tasks for {selectedDate}</h5>
-                                <button className="btn-close btn-close-white" onClick={() => setShowModal(false)}></button>
+                                <h5 className="modal-title">Tasks for this Date : {selectedDate}</h5>
+                                <button className="btn-close btn-close-white"
+                                    onClick={() => setShowListModal(false)}>
+                                </button>
                             </div>
 
-                            {/* Modal body  */}
+                            <div className="modal-body  ">
+                                {filteredTodos.length > 0 ? filteredTodos.map(todo => (
+                                    <div key={todo.id}
+                                        className="d-flex justify-content-between align-items-center mb-2 border p-2 rounded">
 
-                            <div className="modal-body">
-                                {selectedTodo ? (
-                                    <div>
-                                        <h5>Title:<strong>{selectedTodo.title}</strong></h5>
-                                        <p>Description :<strong>{selectedTodo.desc}</strong></p>
-                                        <p>Status: <strong>{selectedTodo.status}</strong></p>
-                                        <p>Date: {selectedTodo.date}</p>
-                                        <p>Time: {selectedTodo.time}</p>
-                                        <button className="btn btn-secondary w-100"
-                                            onClick={() => setSelectedTodo(null)}>Back to List
+                                        <span
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                setSelectedTodo(todo);
+                                                setShowDetailModal(true);
+
+                                            }}>
+                                            {todo.title}
+                                        </span>
+
+                                        <button className="btn btn-sm btn-warning">
+
+                                            {todo.status}
                                         </button>
                                     </div>
-                                ) : (
-
-                                    <ul className="list-group">
-                                        {filteredTodos.length > 0 ? filteredTodos.map(todo => (
-                                            <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                                <span onClick={() => setSelectedTodo(todo)} style={{ cursor: 'pointer' }}>{todo.title}</span>
-
-                                                <button
-                                                    className={`btn btn-sm ${todo.status === 'Completed' ? 'btn-success' : 'btn-warning'}`}
-                                                >
-                                                    {todo.status}
-                                                </button>
-                                            </li>
-                                        )) : <p className="text-center text-muted">No tasks for this day!</p>}
-                                    </ul>
-                                )}
+                                )) : <p className="text-center">No tasks</p>}
                             </div>
+
                         </div>
                     </div>
                 </div>
-
             )}
+
+      {/* Detailview modal separate */}
+
+            {showDetailModal && selectedTodo && (
+                <div className="modal d-block"
+
+                    style={{
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 1050,
+                    }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content ">
+                            <div className="modal-header bg-primary text-white">
+                                <h5 className="modal-title">Task Details</h5>
+                                <button className="btn-close btn-close-white"
+                                    onClick={() => setShowDetailModal(false)}>
+                                </button>
+                            </div>
+
+                            <div className="modal-body">
+                                <div className="container border p-2 rounded">
+
+                                    <p><strong>Title:</strong> {selectedTodo.title}</p>
+                                    <p><strong>Description:</strong> {selectedTodo.desc}</p>
+                                    <p><strong>Status:</strong> {selectedTodo.status}</p>
+                                    <p><strong>Time:</strong> {selectedTodo.time}</p>
+                                    <p><strong>Date:</strong> {selectedTodo.date}</p>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </>
     );
 }

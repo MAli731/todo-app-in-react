@@ -1,4 +1,3 @@
-import { FaChevronLeft } from 'react-icons/fa';
 import { useState } from "react";
 import { data } from 'react-router-dom';
 
@@ -56,9 +55,7 @@ export default function TodoForm({ addTodo , onClose }: Props) {
 
         if (!formData.category) {
             newErrors.category = "Category is required";
-
         }
-
         setErrors(newErrors);
         if (Object.keys(newErrors).length === 0) {
             addTodo(formData);
@@ -70,8 +67,7 @@ export default function TodoForm({ addTodo , onClose }: Props) {
                 status: "Pending",
                 time: ""
             });
-              onClose?.(); 
-          
+              onClose?.();         
         }
     };
 
@@ -124,12 +120,10 @@ export default function TodoForm({ addTodo , onClose }: Props) {
                             <option value="Work">Work</option>
                             <option value="Health">Health</option>
                         </select>
-
                         {errors.category && (
                             <div className="invalid-feedback">{errors.category}</div>
                         )}
                     </div>
-
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
             </div>

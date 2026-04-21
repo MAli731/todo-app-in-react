@@ -67,7 +67,7 @@ img {
 .todo-form-container {
   max-width: 500px;
   margin: 20px auto;
-  padding: 25px;
+  padding: 30px;
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
@@ -188,8 +188,7 @@ img {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
+} 
 .modal-overlay {
   position: fixed;
   top: 0;
