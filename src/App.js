@@ -4,8 +4,8 @@ import TodoList from "./Components/TodoList";
 import TodoForm from "./Components/TodoForm";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarPage from "./Components/CalenderPage";
-
-
+import DetailModal from "./Components/Modals/DetailModal";
+import ListModal from "./Components/Modals/ListModal";
 function App() {
 
   const [todos, setTodos] = useState(
@@ -58,7 +58,14 @@ function App() {
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
-
+  const [listModal, setListModal] = useState(false);
+  const [detailModal, setDetailModal] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+const getLocalDateString = (d) => {
+  if (!d) return "";
+  return new Date(d).toISOString().split("T")[0];
+};
   return (
     <Router>
       <Routes>
@@ -99,10 +106,35 @@ function App() {
         />
         <Route
           path="/calendar"
-          element={<CalendarPage
-            todos={todos} 
-            Status={Status}/> }
-          
+          element={
+            <>
+              <CalendarPage
+                todos={todos}
+                Status={Status}
+                setListModal={setListModal}
+                setSelectedTodo={setSelectedTodo}
+                setSelectedDate={setSelectedDate}
+              />
+
+              <ListModal
+                listModal={listModal}
+                detailModal={detailModal}
+                filteredTodos={todos.filter(
+                     t => getLocalDateString(t.date) === selectedDate
+                )}
+                selectedDate={selectedDate}
+                setListModal={setListModal}
+                setDetailModal={setDetailModal}
+                setSelectedTodo={setSelectedTodo}
+              />
+
+              <DetailModal
+                detailModal={detailModal}
+                selectedTodo={selectedTodo}
+                setDetailModal={setDetailModal}
+              />
+            </>
+          }
         />
       </Routes>
     </Router>
